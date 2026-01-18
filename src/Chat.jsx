@@ -8,26 +8,30 @@ export default function Chat() {
   const [loading, setLoading] = useState(false);
 
   async function askAI() {
-    if (!question.trim()) return;
+  if (!question.trim()) return;
 
-    setLoading(true);
-    setAnswer("");
+  setLoading(true);
+  setAnswer("");
 
-    try {
-      const res = await fetch("http://127.0.0.1:8000/ask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, module: "All" })
-      });
+  try {
+    const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
-      const data = await res.json();
-      setAnswer(data.answer || "No response");
-    } catch {
-      setAnswer("❌ Backend not reachable");
-    } finally {
-      setLoading(false);
-    }
+    const res = await fetch(`${API_BASE}/ask`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question, module: "All" })
+    });
+
+    const data = await res.json();
+    setAnswer(data.answer || "No response");
+  } catch (err) {
+    console.error(err);
+    setAnswer("❌ Backend not reachable");
+  } finally {
+    setLoading(false);
   }
+}
+
 
   function newChat() {
     setQuestion("");
